@@ -16,7 +16,23 @@ server.route({
 	method: "GET",
 	path: "/",
 	handler: (request, response) => {
-		return("Server running");
+		return("Index page");
+	}
+});
+
+
+server.route({
+	method: "GET",
+	path: "/people",
+	handler: (request, response) => {
+		var statement = "SELECT `" + bucket._name + "`.* FROM `" + bucket._name + "` WHERE type = 'person'";
+		var query = N1qlQuery.fromString(statement);
+		bucket.query(query, (error, result) => {
+			if(error) {
+				return response(error).code(500);
+			}
+			return response(result);
+		});
 	}
 });
 
