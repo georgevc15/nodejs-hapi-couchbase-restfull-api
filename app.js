@@ -36,6 +36,30 @@ server.route({
 	}
 });
 
+
+server.route({
+	method: "POST",
+	path: "/person",
+	config: {
+		validate: {
+			payload: {
+				firstname: Joi.string().required(),
+				lastname: Joi.string().required(),
+				type: Joi.any().forbidden().default("person"),
+				timestamp: Joi.any().forbidden().default((new Date()).getTime())
+			}
+		}
+	},
+	handler: (request, response) => {
+		bucket.insert(UUID.v4(), request.payload, (error, result) => {
+			if(error) {
+				return response(error).code(500);
+			}
+			return response(request.payload);
+		});
+	}
+});
+
 server.start(error => {
 	if(error) {
 		throw error;
